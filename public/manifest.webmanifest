@@ -1,8 +1,8 @@
 {
-  "name": "Daily Wellbeing Check-in",
+  "name": "Wellbeing — a little space for you",
   "short_name": "Wellbeing",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f6f5f9",
-  "theme_color": "#f5f3fa"
+  "background_color": "#f7f4fa",
+  "theme_color": "#f5f0fb"
 }
