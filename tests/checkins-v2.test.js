@@ -82,7 +82,7 @@ test("keeps legacy Markdown content when a new section is saved", async () => {
     fs.mkdirSync(daily, { recursive: true });
     fs.writeFileSync(path.join(daily, "2026-11-14.md"), [
       "---", "date: 2026-11-14", "energy: 6", "mood: 7", "motivation: 5",
-      "sleep_quality: 8", "overall: 7", "food: """, "exercise: """,
+      "sleep_quality: 8", "overall: 7", "food: \"\"", "exercise: \"\"",
       "water: true", "daylight: false", "movement: true", "screen_time: false",
       "sleep_routine: true", "---", "", "## Reflection", "", "A useful old note.", ""
     ].join("\n"));
