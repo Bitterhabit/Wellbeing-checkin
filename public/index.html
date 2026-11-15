@@ -2,111 +2,233 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f5f3fa">
-<title>Daily Wellbeing Check-in</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f0fb">
+<title>Wellbeing — a little space for you</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <style>
-:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#282536;background:#f6f5f9;font-synthesis:none}
-*{box-sizing:border-box}body{margin:0;padding:20px 14px 44px}.wrap{max-width:620px;margin:0 auto}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0 20px}
-h1{font-size:23px;margin:0;font-weight:700;letter-spacing:-.5px} .sub{color:#777486;font-size:13px;margin-top:4px}
-.pill{background:#ece8f6;color:#62518c;border-radius:20px;padding:7px 11px;font-size:12px;white-space:nowrap}
-.card{background:#fff;border:1px solid #e9e6ef;border-radius:14px;padding:17px;margin:12px 0;box-shadow:0 2px 8px #29204408}
-h2{font-size:15px;margin:0 0 14px}label{display:block;font-size:14px;font-weight:600}
-.metric{margin:15px 0 18px}.metric-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.score{font-size:15px;color:#6b55a0;font-weight:700;font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;accent-color:#8068b5;margin:0;height:25px}
-.range-labels{display:flex;justify-content:space-between;color:#9793a2;font-size:11px;margin-top:-2px}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-input[type=text],textarea,input[type=date]{width:100%;border:1px solid #dedbe6;border-radius:9px;padding:11px;font:inherit;font-size:14px;background:#fff;color:#282536}
-textarea{resize:vertical;min-height:78px}.field label{margin-bottom:6px}
-.checks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.check{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}.check input{width:17px;height:17px;accent-color:#8068b5}
-button,.button{border:0;border-radius:9px;padding:12px 14px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
-.primary{background:#7159a5;color:white;width:100%;margin-top:3px}.secondary{background:#efedf4;color:#51496a}.exports{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.status{font-size:12px;color:#6a5b8a;min-height:18px;margin:8px 1px 0}
-.footer{color:#898596;font-size:11px;text-align:center;margin:20px 0}
-@media(max-width:390px){body{padding:14px 10px}.card{padding:14px}.fields{grid-template-columns:1fr}.checks{gap:13px 8px}}
+:root{font-family:Inter,ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;color:#342c42;background:#f7f4fa;font-synthesis:none;--ink:#342c42;--muted:#81788d;--purple:#8066ad;--plum:#654d91;--lilac:#eee7f7;--line:#e9e2ef;--card:#fffdfa;--peach:#f4dfd1;--mint:#dcebe1}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 0%,#eee5f7 0,transparent 36%),#f7f4fa}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.shell{max-width:1120px;margin:auto;padding:26px 22px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 24px}.brand{display:flex;align-items:center;gap:13px}.mark{width:45px;height:45px;border-radius:15px;background:#e8ddf4;display:grid;place-items:center;color:var(--plum);font-size:24px;box-shadow:inset 0 0 0 1px #d9cce9}.brand h1{font-size:20px;letter-spacing:-.5px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:3px 0 0}.date-pill{border:1px solid var(--line);background:#fffafc;border-radius:30px;padding:9px 13px;font-size:12px;color:#71677e}
+nav{display:flex;gap:7px;overflow-x:auto;padding:5px 0 15px;margin-bottom:9px;scrollbar-width:thin}nav button{border:0;background:transparent;color:#766d82;padding:10px 14px;border-radius:12px;white-space:nowrap;font-size:13px;font-weight:650}nav button.active{background:#e9e0f3;color:#5c477f}
+.view{display:none}.view.active{display:block}.intro{margin:10px 0 18px}.eyebrow{text-transform:uppercase;letter-spacing:1.5px;color:#927fae;font-size:10px;font-weight:800}.intro h2{font-size:27px;letter-spacing:-.8px;margin:5px 0 5px}.intro p{color:var(--muted);font-size:14px;margin:0;line-height:1.55}
+.grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:20px;box-shadow:0 5px 20px #46305c08;margin-bottom:15px}.card h3{font-size:15px;margin:0 0 5px;letter-spacing:-.2px}.hint{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 15px}
+.field{margin:13px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}.field input[type=text],.field input[type=search],.field input[type=date],.field textarea,.field select{width:100%;border:1px solid #e2dbe9;border-radius:11px;background:#fff;padding:11px 12px;color:var(--ink);outline:none}.field textarea{min-height:76px;resize:vertical;line-height:1.5}.field input:focus,.field textarea:focus,.field select:focus{border-color:#a48bc5;box-shadow:0 0 0 3px #a48bc51c}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{background:#faf7fc;border:1px solid #eee7f4;border-radius:14px;padding:12px}.metric-top{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;font-weight:700}.metric output{color:var(--plum);font-weight:800;font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--purple);margin:9px 0 0}
+.btn{border:0;border-radius:11px;padding:11px 15px;font-size:12px;font-weight:750}.primary{background:var(--plum);color:white}.soft{background:#eee8f5;color:#604b82}.ghost{background:#f7f2f8;color:#766b83;border:1px solid var(--line)}.btn:disabled{opacity:.55;cursor:wait}.actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}.status{font-size:12px;color:#6d5a8b;min-height:18px;margin-top:9px}
+.tag-input{font-size:12px}.side-note{background:#f6f0fa;border-radius:16px;padding:16px;color:#6d5b83;font-size:12px;line-height:1.6}.legacy{border-left:3px solid #d9c8e9;padding:10px 13px;background:#faf7fc;border-radius:0 10px 10px 0;font-size:12px;color:#766c82;margin-top:12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}.toolbar input{flex:1;min-width:180px}.entry-list{display:grid;gap:9px}.entry-row{width:100%;text-align:left;border:1px solid var(--line);border-radius:13px;background:#fff;padding:13px;display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--ink)}.entry-row strong{font-size:12px}.entry-row small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.entry-row .arrow{color:#9a89b2;font-size:18px}
+.insight-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.insight{background:#faf7fc;border:1px solid var(--line);border-radius:15px;padding:15px}.insight span{display:block;color:var(--muted);font-size:11px}.insight strong{display:block;font-size:25px;margin-top:7px;color:#665187}.sources{display:flex;gap:7px;flex-wrap:wrap}.sources button{border:1px solid #e5dced;background:#faf7fc;color:#685784;border-radius:20px;padding:7px 10px;font-size:11px}
+.map-card{overflow:hidden}.map-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.brain-map{width:100%;height:auto;min-height:260px;display:block;background:radial-gradient(ellipse at center,#f4eef9 0,#fbf8fd 66%,#fffdfa 100%);border:1px solid #eee7f3;border-radius:17px}.node{cursor:pointer;outline:none}.node circle{stroke:#fff;stroke-width:2.5;transition:r .15s}.node:focus circle,.node:hover circle{stroke:#4e3b70;stroke-width:3}.map-list{display:grid;gap:7px;margin-top:12px}.map-list button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;text-align:left;font-size:11px;color:var(--ink)}.selected{background:#f5effa;border:1px solid #e2d5ee;border-radius:14px;padding:14px;margin-top:12px;font-size:12px;line-height:1.5}.selected strong{display:block;margin-bottom:4px}.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px;background:#faf7fc;border-radius:14px}
+.footer{color:#a098a9;text-align:center;font-size:11px;margin-top:25px}
+@media(max-width:760px){.shell{padding:17px 13px 42px}.grid{grid-template-columns:1fr}.intro h2{font-size:24px}.card{padding:16px}.metrics{grid-template-columns:1fr}.metric{display:grid;grid-template-columns:1fr 1.1fr;align-items:center}.metric input{margin:0}.insight-cards{grid-template-columns:repeat(3,1fr)}.brain-map{min-height:210px}}
+@media(max-width:420px){.date-pill{display:none}.insight-cards{grid-template-columns:1fr}.insight{display:flex;align-items:center;justify-content:space-between}.insight strong{margin:0}.brand h1{font-size:18px}}
 </style>
 </head>
-<body><main class="wrap">
-<header><div><h1>Daily check-in</h1><div class="sub">A minute for yourself. No perfection required.</div></div><span class="pill" id="todayLabel">Wellbeing</span></header>
+<body><main class="shell">
+<header><div class="brand"><div class="mark" aria-hidden="true">✿</div><div><h1>Wellbeing</h1><p>A little space for you</p></div></div><div class="date-pill" id="todayLabel">Today</div></header>
+<nav aria-label="Main navigation">
+<button class="active" data-view="today">Today</button><button data-view="insights">Insights</button><button data-view="brain">Brain map</button><button data-view="archive">Journal</button><button data-view="settings">About & privacy</button>
+</nav>
+
+<section class="view active" id="view-today">
+<div class="intro"><div class="eyebrow">A gentle daily ritual</div><h2>How are you arriving today?</h2><p>There is no perfect score. Just a moment to notice how things are.</p></div>
+<div class="grid">
+<div>
 <section class="card">
-  <div class="fields"><div class="field"><label for="date">Date</label><input id="date" type="date"></div></div>
-  <div id="metrics"></div>
+<h3>Morning check-in</h3><p class="hint">A quick snapshot to start the day. Save this separately from your evening reflection.</p>
+<div class="field"><label for="date">Date</label><input id="date" type="date"></div>
+<div class="metrics">
+<div class="metric"><div class="metric-top"><label for="m-sleep">Sleep</label><output id="m-sleep-out">5/10</output></div><input id="m-sleep" type="range" min="1" max="10" value="5"></div>
+<div class="metric"><div class="metric-top"><label for="m-mood">Mood</label><output id="m-mood-out">5/10</output></div><input id="m-mood" type="range" min="1" max="10" value="5"></div>
+<div class="metric"><div class="metric-top"><label for="m-energy">Energy</label><output id="m-energy-out">5/10</output></div><input id="m-energy" type="range" min="1" max="10" value="5"></div>
+</div>
+<div class="field"><label for="intention">One small intention for today</label><input id="intention" type="text" maxlength="240" placeholder="What would make today feel worthwhile?"></div>
+<div class="field"><label for="morning-notes">Anything else? <span style="font-weight:400;color:#968da0">(optional)</span></label><textarea id="morning-notes" placeholder="A thought, a feeling, or nothing at all."></textarea></div>
+<div class="actions"><button class="btn primary" id="save-morning">Save morning</button><span class="status" id="morning-status" role="status"></span></div>
 </section>
 <section class="card">
-  <h2>Today's habits</h2>
-  <div class="checks">
-    <label class="check"><input type="checkbox" id="water"> Enough water</label>
-    <label class="check"><input type="checkbox" id="daylight"> Daylight / outside</label>
-    <label class="check"><input type="checkbox" id="movement"> Movement / exercise</label>
-    <label class="check"><input type="checkbox" id="screen_time"> Managed scrolling</label>
-    <label class="check"><input type="checkbox" id="sleep_routine"> Sleep routine</label>
-  </div>
+<h3>Evening reflection</h3><p class="hint">Come back when it suits you. You can save this without completing the morning check-in.</p>
+<div class="metrics">
+<div class="metric"><div class="metric-top"><label for="e-mood">Mood</label><output id="e-mood-out">5/10</output></div><input id="e-mood" type="range" min="1" max="10" value="5"></div>
+<div class="metric"><div class="metric-top"><label for="e-energy">Energy</label><output id="e-energy-out">5/10</output></div><input id="e-energy" type="range" min="1" max="10" value="5"></div>
+</div>
+<div class="field"><label for="went-well">What went well?</label><textarea id="went-well" placeholder="It can be something small."></textarea></div>
+<div class="field"><label for="difficult">What felt difficult?</label><textarea id="difficult" placeholder="Only if you want to write it down."></textarea></div>
+<div class="field"><label for="evening-notes">Something to remember</label><textarea id="evening-notes" placeholder="A thought to leave here for tomorrow."></textarea></div>
+<div class="actions"><button class="btn primary" id="save-evening">Save evening</button><span class="status" id="evening-status" role="status"></span></div>
 </section>
-<section class="card">
-  <h2>Quick notes</h2>
-  <div class="fields">
-    <div class="field"><label for="food">Food</label><input id="food" type="text" placeholder="e.g. Good / mixed / poor"></div>
-    <div class="field"><label for="exercise">Exercise</label><input id="exercise" type="text" placeholder="e.g. Dog walk + gym"></div>
-  </div>
-  <div class="field" style="margin-top:13px"><label for="reflection">Anything worth remembering? <span style="font-weight:400;color:#888">(optional)</span></label><textarea id="reflection" placeholder="One sentence is enough."></textarea></div>
+</div>
+<aside>
+<section class="card"><h3>Your day, your pace</h3><p class="hint">A check-in is an invitation, not an obligation. Skip a day, return later, or change an answer whenever you need.</p><div class="side-note">🌱 Your records stay as Markdown files in your own vault. No account or external service is needed for the standalone app.</div><div id="legacy-note"></div></section>
+<section class="card"><h3>Personal tags</h3><p class="hint">Add a few words to help you find this day later. Tags also create real connections in your brain map.</p><div class="field"><label for="tags">Tags, separated by commas</label><input class="tag-input" id="tags" type="text" placeholder="e.g. family, outdoors, work"></div><button class="btn soft" id="save-tags">Save tags</button><div class="status" id="tag-status" role="status"></div></section>
+</aside>
+</div>
 </section>
-<button class="primary" id="save">Save today's check-in</button>
-<div class="status" id="status" role="status"></div>
-<section class="card">
-  <h2>Export a report</h2>
-  <div class="fields" style="margin-bottom:12px">
-    <div class="field"><label for="week">Week</label><input id="week" type="week"></div>
-    <div class="field"><label for="month">Month</label><input id="month" type="month"></div>
-    <div class="field"><label for="year">Year</label><input id="year" type="number" min="2000" max="2100"></div>
-  </div>
-  <div class="exports">
-    <a class="button secondary" id="dayExport" href="#">Export day</a>
-    <a class="button secondary" id="weekExport" href="#">Export week</a>
-    <a class="button secondary" id="monthExport" href="#">Export month</a>
-    <a class="button secondary" id="yearExport" href="#">Export year</a>
-  </div>
-  <a class="button secondary" style="width:100%;margin-top:9px" href="/api/backup">Download full vault backup (.zip)</a>
+
+<section class="view" id="view-insights">
+<div class="intro"><div class="eyebrow">Patterns, not grades</div><h2>A little perspective</h2><p>See what you have recorded. Empty days are simply days you did not write.</p></div>
+<section class="card"><div class="toolbar"><label for="insight-period">View</label><select id="insight-period"><option value="week">This week</option><option value="month">This month</option></select><span id="insight-label" class="hint"></span></div>
+<div class="insight-cards"><div class="insight"><span>Mood average</span><strong id="avg-mood">—</strong></div><div class="insight"><span>Energy average</span><strong id="avg-energy">—</strong></div><div class="insight"><span>Sleep average</span><strong id="avg-sleep">—</strong></div></div>
+<p class="hint" id="insight-note" style="margin-top:14px">Averages appear when you have recorded numeric check-in values.</p>
+<h3>Records included</h3><p class="hint">Each date opens its original entry, so you can see where the summary came from.</p><div class="sources" id="insight-sources"></div>
 </section>
-<div class="footer">Your entries are saved as Markdown on your own server.</div>
+</section>
+
+<section class="view" id="view-brain">
+<div class="intro"><div class="eyebrow">Your personal archive</div><h2>A map of your days</h2><p>Every dot is a real daily record. Connections show shared weeks or tags — never inferred moods.</p></div>
+<section class="card map-card"><div class="map-tools"><input id="map-search" type="search" placeholder="Find a date, note or tag…" aria-label="Search brain map"><button class="btn soft" id="map-refresh">Refresh map</button></div>
+<svg class="brain-map" id="brain-svg" viewBox="0 0 620 390" role="group" aria-label="Interactive map of daily journal records">
+<path d="M305 70 C270 30 204 39 183 81 C131 73 95 120 115 165 C75 203 103 258 150 270 C147 318 204 340 248 313 C271 348 319 348 339 315 C387 345 442 319 441 275 C495 263 512 213 480 180 C504 133 469 88 423 88 C398 44 343 37 305 70Z" fill="#e8dcf2" stroke="#d9c8e8" stroke-width="3"/>
+<path d="M305 75 C280 112 282 146 304 174 C278 208 280 252 300 311 M307 76 C339 112 338 146 315 174 C344 210 340 255 315 313" fill="none" stroke="#d3c1e4" stroke-width="5" stroke-linecap="round" stroke-dasharray="4 7"/>
+<g id="map-edges"></g><g id="map-nodes"></g>
+</svg>
+<div class="selected" id="map-selected"><strong>Your map is waiting</strong>Your saved check-ins will appear here as little points of light.</div><div class="map-list" id="map-list" aria-label="Journal records"></div>
+</section>
+</section>
+
+<section class="view" id="view-archive">
+<div class="intro"><div class="eyebrow">A place to keep things</div><h2>Your journal</h2><p>Search your notes, browse by date, or take a copy of your records with you.</p></div>
+<section class="card"><div class="toolbar"><input id="archive-search" type="search" placeholder="Search words or tags…" aria-label="Search journal"><button class="btn soft" id="archive-refresh">Search</button></div><div class="entry-list" id="archive-list"><div class="empty">Your saved entries will appear here.</div></div></section>
+<section class="card"><h3>Take your records with you</h3><p class="hint">Export an individual day or a period summary. The full backup contains the Markdown vault.</p><div class="toolbar"><input type="date" id="export-date"><button class="btn soft" id="export-day">Export day</button></div><div class="toolbar"><input type="month" id="export-month"><button class="btn soft" id="export-month-btn">Export month</button></div><a class="btn soft" href="/api/backup" style="text-decoration:none;display:inline-flex">Download full vault backup (.zip)</a></section>
+</section>
+
+<section class="view" id="view-settings">
+<div class="intro"><div class="eyebrow">The important bits</div><h2>About your space</h2><p>Designed to be useful on its own, with your data staying under your control.</p></div>
+<section class="card"><h3>Where your data lives</h3><p class="hint">Daily records are stored as Markdown in the server's vault folder. The app does not need a cloud account, analytics service or AI connection.</p><div class="side-note">The brain map and insights are generated from the records in that vault. They do not send your journal to an external service.</div></section>
+<section class="card"><h3>Privacy and deployment</h3><p class="hint">This version does not include built-in user authentication. Keep it on a trusted private network or behind an authenticated access layer. Do not expose it directly to the public internet.</p><p class="hint">Petrio and Alfie integration is not enabled. Any future connection will be opt-in and separately scoped.</p></section>
+<section class="card"><h3>Looking after your archive</h3><p class="hint">Download a full vault backup regularly. Keep a second copy somewhere separate from the running container. Restoring means placing the backed-up vault in the configured data directory.</p><a class="btn soft" href="/api/backup" style="text-decoration:none;display:inline-flex">Download vault backup</a></section>
+</section>
+<div class="footer">A small space to check in with yourself · Your days do not need to be perfect.</div>
 </main>
 <script>
-const metricDefs=[["energy","Energy"],["mood","Mood"],["motivation","Motivation"],["sleep_quality","Sleep quality"],["overall","Overall wellbeing"]];
-const metrics=document.getElementById("metrics");
-metrics.innerHTML=metricDefs.map(([id,label])=>`<div class="metric"><div class="metric-top"><label for="${id}">${label}</label><span class="score" id="${id}Value">5/10</span></div><input type="range" min="1" max="10" value="5" id="${id}"><div class="range-labels"><span>Low</span><span>High</span></div></div>`).join("");
-for(const [id] of metricDefs){document.getElementById(id).addEventListener("input",e=>document.getElementById(id+"Value").textContent=e.target.value+"/10");}
-const $=id=>document.getElementById(id);
-const now=new Date(), localDate=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
-$("date").value=localDate;$("week").value=isoWeek(localDate);$("month").value=localDate.slice(0,7);$("year").value=localDate.slice(0,4);
-$("todayLabel").textContent=new Intl.DateTimeFormat(undefined,{weekday:"short",month:"short",day:"numeric"}).format(now);
-function isoWeek(s){const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+4-(d.getDay()||7));const y=d.getFullYear();const first=new Date(y,0,1);const w=Math.ceil((((d-first)/86400000)+1)/7);return `${y}-W${String(w).padStart(2,"0")}`;}
-function setVal(id,v){$(id).value=v??(id==="food"||id==="exercise"||id==="reflection"?"":5);if(metricDefs.some(x=>x[0]===id))$(id+"Value").textContent=$(id).value+"/10";}
-async function loadDate(){
- const date=$("date").value;if(!date)return;
- try{const r=await fetch("/api/entry/"+date);const d=await r.json();
- for(const [id] of metricDefs)setVal(id,d[id]);
- for(const id of ["food","exercise","reflection"])$(id).value=d[id]||"";
- for(const id of ["water","daylight","movement","screen_time","sleep_routine"])$(id).checked=!!(d.habits&&d.habits[id]);
- $("status").textContent=d.date?"Loaded saved entry.":"New day — ready when you are.";
- }catch(e){$("status").textContent="Couldn't load this entry. Check the server connection.";}
- updateExports();
+const $ = id => document.getElementById(id);
+const now = new Date();
+const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0,10);
+$("date").value = localDate;
+$("export-date").value = localDate;
+$("export-month").value = localDate.slice(0,7);
+$("todayLabel").textContent = new Intl.DateTimeFormat(undefined,{weekday:"short",month:"short",day:"numeric"}).format(now);
+let currentEntry = null;
+let brainData = {nodes:[],edges:[]};
+
+document.querySelectorAll("nav button").forEach(button => button.addEventListener("click", () => showView(button.dataset.view)));
+function showView(name) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.view === name));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
+  if (name === "insights") loadInsights();
+  if (name === "brain") loadBrain();
+  if (name === "archive") loadArchive();
 }
-$("date").addEventListener("change",loadDate);
-function updateExports(){const d=$("date").value;$("dayExport").href="/api/export/day/"+d;$("weekExport").href="/api/export/week/"+$("week").value;$("monthExport").href="/api/export/month/"+$("month").value;$("yearExport").href="/api/export/year/"+$("year").value;}
-for(const id of ["week","month","year"])$(id).addEventListener("change",updateExports);
-$("save").addEventListener("click",async()=>{
- const payload={date:$("date").value};
- for(const [id] of metricDefs)payload[id]=Number($(id).value);
- for(const id of ["food","exercise","reflection"])payload[id]=$(id).value;
- payload.habits={};for(const id of ["water","daylight","movement","screen_time","sleep_routine"])payload.habits[id]=$(id).checked;
- $("save").disabled=true;$("save").textContent="Saving…";
- try{const r=await fetch("/api/entry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const result=await r.json();if(!r.ok)throw new Error(result.error||"Save failed");$("status").textContent="Saved. Nice work showing up for yourself."; }
- catch(e){$("status").textContent="Couldn't save: "+e.message;}
- finally{$("save").disabled=false;$("save").textContent="Save today's check-in";}
-});
-loadDate();
+function setSlider(id, value) {
+  const el = $(id); if (value != null && value !== "") el.value = value;
+  $(id + "-out").textContent = el.value + "/10";
+}
+["m-sleep","m-mood","m-energy","e-mood","e-energy"].forEach(id => $(id).addEventListener("input", () => setSlider(id)));
+function setStatus(id, message) { $(id).textContent = message; }
+async function api(url, options) {
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+function parseTags() { return $("tags").value.split(",").map(s => s.trim()).filter(Boolean).slice(0,30); }
+async function loadToday() {
+  const date = $("date").value; if (!date) return;
+  try {
+    currentEntry = await api("/api/v2/entry/" + date);
+    const m = currentEntry.morning || {}, e = currentEntry.evening || {};
+    setSlider("m-sleep",m.sleep_quality);setSlider("m-mood",m.mood);setSlider("m-energy",m.energy);
+    $("intention").value=m.intention||"";$("morning-notes").value=m.notes||"";
+    setSlider("e-mood",e.mood);setSlider("e-energy",e.energy);
+    $("went-well").value=e.went_well||"";$("difficult").value=e.difficult||"";$("evening-notes").value=e.notes||"";
+    $("tags").value=(currentEntry.tags||[]).join(", ");
+    setStatus("morning-status",currentEntry.morning?"Morning check-in saved.":"Ready for a morning check-in.");
+    setStatus("evening-status",currentEntry.evening?"Evening reflection saved.":"Come back whenever you're ready.");
+    $("legacy-note").innerHTML=currentEntry.legacy?'<div class="legacy">Your original check-in from this date is safely preserved in the archive. New morning and evening notes will be added alongside it.</div>':"";
+  } catch(error) { setStatus("morning-status","Couldn't load this day: "+error.message); }
+}
+$("date").addEventListener("change",loadToday);
+async function saveSection(section) {
+  const date=$("date").value;if(!date)return;
+  const body={date,tags:parseTags()};
+  if(section==="morning") body.morning={sleep_quality:Number($("m-sleep").value),mood:Number($("m-mood").value),energy:Number($("m-energy").value),intention:$("intention").value,notes:$("morning-notes").value};
+  else body.evening={mood:Number($("e-mood").value),energy:Number($("e-energy").value),went_well:$("went-well").value,difficult:$("difficult").value,notes:$("evening-notes").value};
+  const button=$("save-"+section);button.disabled=true;button.textContent="Saving…";
+  try { await api("/api/v2/entry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});setStatus(section+"-status","Saved. Thanks for taking a moment.");await loadToday(); }
+  catch(error){setStatus(section+"-status","Couldn't save: "+error.message);}
+  finally{button.disabled=false;button.textContent=section==="morning"?"Save morning":"Save evening";}
+}
+$("save-morning").addEventListener("click",()=>saveSection("morning"));
+$("save-evening").addEventListener("click",()=>saveSection("evening"));
+$("save-tags").addEventListener("click",async()=>{try{await api("/api/v2/entry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({date:$("date").value,tags:parseTags()})});setStatus("tag-status","Tags saved.");}catch(e){setStatus("tag-status",e.message);}});
+
+function safeText(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadArchive() {
+  const q=$("archive-search").value.trim();
+  try {
+    const data=await api("/api/v2/search?q="+encodeURIComponent(q));
+    $("archive-list").innerHTML=data.entries.length?data.entries.map(e=>'<button class="entry-row" data-date="'+e.date+'"><span><strong>'+safeText(e.title)+'</strong><small>'+safeText(e.preview||"No written reflection.")+'</small></span><span class="arrow">›</span></button>').join(""):'<div class="empty">No matching records yet. Try another word or date.</div>';
+    $("archive-list").querySelectorAll("[data-date]").forEach(b=>b.addEventListener("click",()=>openDate(b.dataset.date)));
+  } catch(error){$("archive-list").innerHTML='<div class="empty">'+safeText(error.message)+'</div>';}
+}
+$("archive-refresh").addEventListener("click",loadArchive);
+$("archive-search").addEventListener("keydown",e=>{if(e.key==="Enter")loadArchive();});
+function openDate(date){$("date").value=date;showView("today");loadToday();}
+$("export-day").addEventListener("click",()=>{if($("export-date").value)location.href="/api/export/day/"+$("export-date").value;});
+$("export-month-btn").addEventListener("click",()=>{if($("export-month").value)location.href="/api/export/month/"+$("export-month").value;});
+
+async function loadInsights() {
+  try {
+    const data=await api("/api/v2/insights?period="+$("insight-period").value+"&date="+$("date").value);
+    $("insight-label").textContent=data.label+" · "+data.entryCount+" recorded day(s)";
+    $("avg-mood").textContent=data.averages.mood==null?"—":data.averages.mood+"/10";
+    $("avg-energy").textContent=data.averages.energy==null?"—":data.averages.energy+"/10";
+    $("avg-sleep").textContent=data.averages.sleep_quality==null?"—":data.averages.sleep_quality+"/10";
+    $("insight-note").textContent=data.note;
+    $("insight-sources").innerHTML=data.sourceDates.length?data.sourceDates.map(d=>'<button data-source-date="'+d+'">'+d+'</button>').join(""):'<span class="hint">No entries in this period. Nothing to catch up on.</span>';
+    $("insight-sources").querySelectorAll("[data-source-date]").forEach(b=>b.addEventListener("click",()=>openDate(b.dataset.sourceDate)));
+  } catch(error){$("insight-note").textContent="Couldn't load insights: "+error.message;}
+}
+$("insight-period").addEventListener("change",loadInsights);
+
+function mapPosition(index,total) {
+  const angle=index*2.3999632297, radius=Math.sqrt((index+1)/(total+1));
+  return {x:310+Math.cos(angle)*radius*174,y:190+Math.sin(angle)*radius*111};
+}
+async function loadBrain() {
+  try {
+    brainData=await api("/api/v2/brain-map");
+    renderBrain();
+  } catch(error){$("map-selected").textContent="Couldn't load the map: "+error.message;}
+}
+function renderBrain() {
+  const q=$("map-search").value.trim().toLowerCase();
+  const nodes=brainData.nodes.filter(n=>(n.date+" "+n.preview+" "+(n.tags||[]).join(" ")).toLowerCase().includes(q));
+  const positions={};
+  brainData.nodes.forEach((n,i)=>positions[n.id]=mapPosition(i,Math.max(brainData.nodes.length,1)));
+  const visible=new Set(nodes.map(n=>n.id));
+  $("map-edges").innerHTML=brainData.edges.filter(e=>visible.has(e.source)&&visible.has(e.target)).map(e=>'<line x1="'+positions[e.source].x+'" y1="'+positions[e.source].y+'" x2="'+positions[e.target].x+'" y2="'+positions[e.target].y+'" stroke="'+(e.type==="shared-tag"?"#b18acb":"#c9b9d9")+'" stroke-width="'+(e.type==="shared-tag"?2.4:1.3)+'" opacity=".65"/>').join("");
+  $("map-nodes").innerHTML=nodes.map(n=>{const p=positions[n.id];return '<g class="node" tabindex="0" role="button" aria-label="Open '+n.date+'" data-node-date="'+n.date+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="7.5" fill="#8066ad"/><circle cx="'+p.x+'" cy="'+p.y+'" r="2.3" fill="#fff"/></g>';}).join("");
+  $("map-nodes").querySelectorAll("[data-node-date]").forEach(el=>{
+    el.addEventListener("click",()=>selectMapNode(el.dataset.nodeDate));
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectMapNode(el.dataset.nodeDate);}});
+  });
+  $("map-list").innerHTML=nodes.slice().reverse().map(n=>'<button data-map-date="'+n.date+'">'+n.date+' · '+safeText(n.preview||"Daily check-in")+'</button>').join("");
+  $("map-list").querySelectorAll("[data-map-date]").forEach(b=>b.addEventListener("click",()=>selectMapNode(b.dataset.mapDate)));
+  if(!nodes.length)$("map-selected").innerHTML="<strong>No matching days</strong>Try a different search, or create your first check-in.";
+  else if(! $("map-selected").dataset.selected) $("map-selected").innerHTML="<strong>"+nodes.length+" day(s) mapped</strong>Select a point or a date below to open its record.";
+  if(brainData.truncated)$("map-selected").innerHTML+="<div class='hint'>Showing the 400 most recent records.</div>";
+}
+function selectMapNode(date) {
+  const n=brainData.nodes.find(item=>item.date===date);if(!n)return;
+  $("map-selected").dataset.selected=date;
+  $("map-selected").innerHTML="<strong>"+safeText(n.title)+"</strong>"+safeText(n.preview||"No written reflection.")+"<div class='actions'><button class='btn soft' id='open-map-date'>Open this day</button></div>";
+  $("open-map-date").addEventListener("click",()=>openDate(date));
+}
+$("map-search").addEventListener("input",renderBrain);
+$("map-refresh").addEventListener("click",loadBrain);
+loadToday();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
 </script></body></html>
