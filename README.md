@@ -40,6 +40,8 @@ The versioned endpoints are under `/api/v2`:
 - `GET /api/v2/search?q=...`
 - `GET /api/v2/insights?period=week|month&date=YYYY-MM-DD`
 - `GET /api/v2/brain-map`
+- `GET /api/v2/export/day/:date`
+- `GET /api/v2/export/:kind/:period` (week, month or year)
 
 The original `/api/entry` and export endpoints remain for compatibility with the first version.
 
