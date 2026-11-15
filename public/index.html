@@ -176,8 +176,8 @@ async function loadArchive() {
 $("archive-refresh").addEventListener("click",loadArchive);
 $("archive-search").addEventListener("keydown",e=>{if(e.key==="Enter")loadArchive();});
 function openDate(date){$("date").value=date;showView("today");loadToday();}
-$("export-day").addEventListener("click",()=>{if($("export-date").value)location.href="/api/export/day/"+$("export-date").value;});
-$("export-month-btn").addEventListener("click",()=>{if($("export-month").value)location.href="/api/export/month/"+$("export-month").value;});
+$("export-day").addEventListener("click",()=>{if($("export-date").value)location.href="/api/v2/export/day/"+$("export-date").value;});
+$("export-month-btn").addEventListener("click",()=>{if($("export-month").value)location.href="/api/v2/export/month/"+$("export-month").value;});
 
 async function loadInsights() {
   try {
