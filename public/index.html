@@ -122,7 +122,7 @@ function showView(name) {
   if (name === "archive") loadArchive();
 }
 function setSlider(id, value) {
-  const el = $(id); if (value != null && value !== "") el.value = value;
+  const el = $(id); el.value = value != null && value !== "" ? value : 5;
   $(id + "-out").textContent = el.value + "/10";
 }
 ["m-sleep","m-mood","m-energy","e-mood","e-energy"].forEach(id => $(id).addEventListener("input", () => setSlider(id)));
