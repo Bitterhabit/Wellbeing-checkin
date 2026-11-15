@@ -14,7 +14,7 @@ async function withServer(run) {
   const server = app.listen(0, "127.0.0.1");
   await new Promise(resolve => server.once("listening", resolve));
   const base = "http://127.0.0.1:" + server.address().port;
-  try { await run(base); }
+  try { await run(base, vault); }
   finally {
     await new Promise(resolve => server.close(resolve));
     fs.rmSync(vault, { recursive: true, force: true });
@@ -72,5 +72,30 @@ test("indexes real records and builds source-linked insight summaries", async ()
     const graph = await fetch(base + "/api/v2/brain-map").then(r => r.json());
     assert.equal(graph.nodes.length, 1);
     assert.deepEqual(graph.nodes[0].tags, ["outside"]);
+  });
+});
+
+
+test("keeps legacy Markdown content when a new section is saved", async () => {
+  await withServer(async (base, vault) => {
+    const daily = path.join(vault, "Daily");
+    fs.mkdirSync(daily, { recursive: true });
+    fs.writeFileSync(path.join(daily, "2026-11-14.md"), [
+      "---", "date: 2026-11-14", "energy: 6", "mood: 7", "motivation: 5",
+      "sleep_quality: 8", "overall: 7", "food: """, "exercise: """,
+      "water: true", "daylight: false", "movement: true", "screen_time: false",
+      "sleep_routine: true", "---", "", "## Reflection", "", "A useful old note.", ""
+    ].join("\n"));
+    const old = await fetch(base + "/api/v2/entry/2026-11-14").then(r => r.json());
+    assert.equal(old.legacy.reflection, "A useful old note.");
+    await fetch(base + "/api/v2/entry", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ date: "2026-11-14", morning: { intention: "Keep the old note too" } })
+    });
+    const upgraded = await fetch(base + "/api/v2/entry/2026-11-14").then(r => r.json());
+    assert.equal(upgraded.legacy.reflection, "A useful old note.");
+    assert.equal(upgraded.legacy.mood, 7);
+    const report = await fetch(base + "/api/v2/export/month/2026-11").then(r => r.text());
+    assert.match(report, /A useful old note/);
   });
 });
