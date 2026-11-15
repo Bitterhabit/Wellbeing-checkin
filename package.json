@@ -1,0 +1,12 @@
+{
+  "name": "wellbeing-checkin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple self-hosted daily wellbeing check-in with Markdown storage and exports.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "express": "^4.21.2"
+  }
+}
