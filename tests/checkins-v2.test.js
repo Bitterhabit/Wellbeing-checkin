@@ -95,6 +95,8 @@ test("keeps legacy Markdown content when a new section is saved", async () => {
     const upgraded = await fetch(base + "/api/v2/entry/2026-11-14").then(r => r.json());
     assert.equal(upgraded.legacy.reflection, "A useful old note.");
     assert.equal(upgraded.legacy.mood, 7);
+    const markdown = fs.readFileSync(path.join(daily, "2026-11-14.md"), "utf8");
+    assert.match(markdown, /A useful old note/);
     const report = await fetch(base + "/api/v2/export/month/2026-11").then(r => r.text());
     assert.match(report, /A useful old note/);
   });
