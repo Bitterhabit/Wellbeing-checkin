@@ -68,7 +68,10 @@ module.exports = function registerV2(app, vaultPath) {
       "", "## Evening", "",
       e.went_well ? "### What went well\n\n" + e.went_well : "_No evening reflection recorded._",
       "", e.difficult ? "### What felt difficult\n\n" + e.difficult : "",
-      "", e.notes || "", ""
+      "", e.notes || "", "",
+      payload.legacy ? "## Original check-in (preserved)" : "",
+      payload.legacy ? "- Energy: " + (payload.legacy.energy ?? "—") + "/10 · Mood: " + (payload.legacy.mood ?? "—") + "/10 · Sleep: " + (payload.legacy.sleep_quality ?? "—") + "/10" : "",
+      payload.legacy?.reflection || "", ""
     ].join("\n");
     fs.mkdirSync(daily, { recursive: true });
     fs.writeFileSync(fileFor(entry.date), markdown, "utf8");
