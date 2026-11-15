@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f3fa">
+<title>Daily Wellbeing Check-in</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#282536;background:#f6f5f9;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;padding:20px 14px 44px}.wrap{max-width:620px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0 20px}
+h1{font-size:23px;margin:0;font-weight:700;letter-spacing:-.5px} .sub{color:#777486;font-size:13px;margin-top:4px}
+.pill{background:#ece8f6;color:#62518c;border-radius:20px;padding:7px 11px;font-size:12px;white-space:nowrap}
+.card{background:#fff;border:1px solid #e9e6ef;border-radius:14px;padding:17px;margin:12px 0;box-shadow:0 2px 8px #29204408}
+h2{font-size:15px;margin:0 0 14px}label{display:block;font-size:14px;font-weight:600}
+.metric{margin:15px 0 18px}.metric-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.score{font-size:15px;color:#6b55a0;font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#8068b5;margin:0;height:25px}
+.range-labels{display:flex;justify-content:space-between;color:#9793a2;font-size:11px;margin-top:-2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input[type=text],textarea,input[type=date]{width:100%;border:1px solid #dedbe6;border-radius:9px;padding:11px;font:inherit;font-size:14px;background:#fff;color:#282536}
+textarea{resize:vertical;min-height:78px}.field label{margin-bottom:6px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}.check input{width:17px;height:17px;accent-color:#8068b5}
+button,.button{border:0;border-radius:9px;padding:12px 14px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.primary{background:#7159a5;color:white;width:100%;margin-top:3px}.secondary{background:#efedf4;color:#51496a}.exports{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.status{font-size:12px;color:#6a5b8a;min-height:18px;margin:8px 1px 0}
+.footer{color:#898596;font-size:11px;text-align:center;margin:20px 0}
+@media(max-width:390px){body{padding:14px 10px}.card{padding:14px}.fields{grid-template-columns:1fr}.checks{gap:13px 8px}}
+</style>
+</head>
+<body><main class="wrap">
+<header><div><h1>Daily check-in</h1><div class="sub">A minute for yourself. No perfection required.</div></div><span class="pill" id="todayLabel">Wellbeing</span></header>
+<section class="card">
+  <div class="fields"><div class="field"><label for="date">Date</label><input id="date" type="date"></div></div>
+  <div id="metrics"></div>
+</section>
+<section class="card">
+  <h2>Today's habits</h2>
+  <div class="checks">
+    <label class="check"><input type="checkbox" id="water"> Enough water</label>
+    <label class="check"><input type="checkbox" id="daylight"> Daylight / outside</label>
+    <label class="check"><input type="checkbox" id="movement"> Movement / exercise</label>
+    <label class="check"><input type="checkbox" id="screen_time"> Managed scrolling</label>
+    <label class="check"><input type="checkbox" id="sleep_routine"> Sleep routine</label>
+  </div>
+</section>
+<section class="card">
+  <h2>Quick notes</h2>
+  <div class="fields">
+    <div class="field"><label for="food">Food</label><input id="food" type="text" placeholder="e.g. Good / mixed / poor"></div>
+    <div class="field"><label for="exercise">Exercise</label><input id="exercise" type="text" placeholder="e.g. Dog walk + gym"></div>
+  </div>
+  <div class="field" style="margin-top:13px"><label for="reflection">Anything worth remembering? <span style="font-weight:400;color:#888">(optional)</span></label><textarea id="reflection" placeholder="One sentence is enough."></textarea></div>
+</section>
+<button class="primary" id="save">Save today's check-in</button>
+<div class="status" id="status" role="status"></div>
+<section class="card">
+  <h2>Export a report</h2>
+  <div class="fields" style="margin-bottom:12px">
+    <div class="field"><label for="week">Week</label><input id="week" type="week"></div>
+    <div class="field"><label for="month">Month</label><input id="month" type="month"></div>
+    <div class="field"><label for="year">Year</label><input id="year" type="number" min="2000" max="2100"></div>
+  </div>
+  <div class="exports">
+    <a class="button secondary" id="dayExport" href="#">Export day</a>
+    <a class="button secondary" id="weekExport" href="#">Export week</a>
+    <a class="button secondary" id="monthExport" href="#">Export month</a>
+    <a class="button secondary" id="yearExport" href="#">Export year</a>
+  </div>
+  <a class="button secondary" style="width:100%;margin-top:9px" href="/api/backup">Download full vault backup (.zip)</a>
+</section>
+<div class="footer">Your entries are saved as Markdown on your own server.</div>
+</main>
+<script>
+const metricDefs=[["energy","Energy"],["mood","Mood"],["motivation","Motivation"],["sleep_quality","Sleep quality"],["overall","Overall wellbeing"]];
+const metrics=document.getElementById("metrics");
+metrics.innerHTML=metricDefs.map(([id,label])=>`<div class="metric"><div class="metric-top"><label for="${id}">${label}</label><span class="score" id="${id}Value">5/10</span></div><input type="range" min="1" max="10" value="5" id="${id}"><div class="range-labels"><span>Low</span><span>High</span></div></div>`).join("");
+for(const [id] of metricDefs){document.getElementById(id).addEventListener("input",e=>document.getElementById(id+"Value").textContent=e.target.value+"/10");}
+const $=id=>document.getElementById(id);
+const now=new Date(), localDate=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$("date").value=localDate;$("week").value=isoWeek(localDate);$("month").value=localDate.slice(0,7);$("year").value=localDate.slice(0,4);
+$("todayLabel").textContent=new Intl.DateTimeFormat(undefined,{weekday:"short",month:"short",day:"numeric"}).format(now);
+function isoWeek(s){const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+4-(d.getDay()||7));const y=d.getFullYear();const first=new Date(y,0,1);const w=Math.ceil((((d-first)/86400000)+1)/7);return `${y}-W${String(w).padStart(2,"0")}`;}
+function setVal(id,v){$(id).value=v??(id==="food"||id==="exercise"||id==="reflection"?"":5);if(metricDefs.some(x=>x[0]===id))$(id+"Value").textContent=$(id).value+"/10";}
+async function loadDate(){
+ const date=$("date").value;if(!date)return;
+ try{const r=await fetch("/api/entry/"+date);const d=await r.json();
+ for(const [id] of metricDefs)setVal(id,d[id]);
+ for(const id of ["food","exercise","reflection"])$(id).value=d[id]||"";
+ for(const id of ["water","daylight","movement","screen_time","sleep_routine"])$(id).checked=!!(d.habits&&d.habits[id]);
+ $("status").textContent=d.date?"Loaded saved entry.":"New day — ready when you are.";
+ }catch(e){$("status").textContent="Couldn't load this entry. Check the server connection.";}
+ updateExports();
+}
+$("date").addEventListener("change",loadDate);
+function updateExports(){const d=$("date").value;$("dayExport").href="/api/export/day/"+d;$("weekExport").href="/api/export/week/"+$("week").value;$("monthExport").href="/api/export/month/"+$("month").value;$("yearExport").href="/api/export/year/"+$("year").value;}
+for(const id of ["week","month","year"])$(id).addEventListener("change",updateExports);
+$("save").addEventListener("click",async()=>{
+ const payload={date:$("date").value};
+ for(const [id] of metricDefs)payload[id]=Number($(id).value);
+ for(const id of ["food","exercise","reflection"])payload[id]=$(id).value;
+ payload.habits={};for(const id of ["water","daylight","movement","screen_time","sleep_routine"])payload.habits[id]=$(id).checked;
+ $("save").disabled=true;$("save").textContent="Saving…";
+ try{const r=await fetch("/api/entry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const result=await r.json();if(!r.ok)throw new Error(result.error||"Save failed");$("status").textContent="Saved. Nice work showing up for yourself."; }
+ catch(e){$("status").textContent="Couldn't save: "+e.message;}
+ finally{$("save").disabled=false;$("save").textContent="Save today's check-in";}
+});
+loadDate();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
+</script></body></html>
