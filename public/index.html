@@ -91,7 +91,7 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:5px 0 15px;margin-bottom:9px;sc
 <section class="view" id="view-archive">
 <div class="intro"><div class="eyebrow">A place to keep things</div><h2>Your journal</h2><p>Search your notes, browse by date, or take a copy of your records with you.</p></div>
 <section class="card"><div class="toolbar"><input id="archive-search" type="search" placeholder="Search words or tags…" aria-label="Search journal"><button class="btn soft" id="archive-refresh">Search</button></div><div class="entry-list" id="archive-list"><div class="empty">Your saved entries will appear here.</div></div></section>
-<section class="card"><h3>Take your records with you</h3><p class="hint">Export an individual day or a period summary. The full backup contains the Markdown vault.</p><div class="toolbar"><input type="date" id="export-date"><button class="btn soft" id="export-day">Export day</button></div><div class="toolbar"><input type="month" id="export-month"><button class="btn soft" id="export-month-btn">Export month</button></div><a class="btn soft" href="/api/backup" style="text-decoration:none;display:inline-flex">Download full vault backup (.zip)</a></section>
+<section class="card"><h3>Take your records with you</h3><p class="hint">Export an individual day or a period summary. The full backup contains the Markdown vault.</p><div class="toolbar"><input type="date" id="export-date"><button class="btn soft" id="export-day">Export day</button></div><div class="toolbar"><input type="week" id="export-week"><button class="btn soft" id="export-week-btn">Export week</button></div><div class="toolbar"><input type="month" id="export-month"><button class="btn soft" id="export-month-btn">Export month</button></div><div class="toolbar"><input type="number" min="2000" max="2100" id="export-year" placeholder="Year"><button class="btn soft" id="export-year-btn">Export year</button></div><a class="btn soft" href="/api/backup" style="text-decoration:none;display:inline-flex">Download full vault backup (.zip)</a></section>
 </section>
 
 <section class="view" id="view-settings">
@@ -109,6 +109,8 @@ const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toIS
 $("date").value = localDate;
 $("export-date").value = localDate;
 $("export-month").value = localDate.slice(0,7);
+$("export-week").value = isoWeek(localDate);
+$("export-year").value = localDate.slice(0,4);
 $("todayLabel").textContent = new Intl.DateTimeFormat(undefined,{weekday:"short",month:"short",day:"numeric"}).format(now);
 let currentEntry = null;
 let brainData = {nodes:[],edges:[]};
@@ -121,6 +123,7 @@ function showView(name) {
   if (name === "brain") loadBrain();
   if (name === "archive") loadArchive();
 }
+function isoWeek(dateString){const d=new Date(dateString+"T12:00:00");d.setDate(d.getDate()+4-(d.getDay()||7));const year=d.getFullYear(),first=new Date(year,0,1);const week=Math.ceil((((d-first)/86400000)+1)/7);return year+"-W"+String(week).padStart(2,"0");}
 function setSlider(id, value) {
   const el = $(id); el.value = value != null && value !== "" ? value : 5;
   $(id + "-out").textContent = el.value + "/10";
@@ -177,7 +180,9 @@ $("archive-refresh").addEventListener("click",loadArchive);
 $("archive-search").addEventListener("keydown",e=>{if(e.key==="Enter")loadArchive();});
 function openDate(date){$("date").value=date;showView("today");loadToday();}
 $("export-day").addEventListener("click",()=>{if($("export-date").value)location.href="/api/v2/export/day/"+$("export-date").value;});
+$("export-week-btn").addEventListener("click",()=>{if($("export-week").value)location.href="/api/v2/export/week/"+$("export-week").value;});
 $("export-month-btn").addEventListener("click",()=>{if($("export-month").value)location.href="/api/v2/export/month/"+$("export-month").value;});
+$("export-year-btn").addEventListener("click",()=>{if($("export-year").value)location.href="/api/v2/export/year/"+$("export-year").value;});
 
 async function loadInsights() {
   try {
