@@ -145,4 +145,6 @@ app.get("/api/backup", (req,res) => {
   archive.finalize();
 });
 app.get("/api/health", (_,res)=>res.json({ok:true}));
+require("./checkins-v2")(app, VAULT);
+
 app.listen(PORT, "0.0.0.0", () => console.log(`Wellbeing app listening on ${PORT}; vault: ${VAULT}`));
