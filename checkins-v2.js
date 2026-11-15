@@ -187,6 +187,48 @@ module.exports = function registerV2(app, vaultPath) {
       note: "Averages use recorded numeric values only. They do not explain causes or make medical assessments."
     });
   });
+  app.get("/api/v2/export/day/:date", (req, res) => {
+    if (!validDate(req.params.date)) return res.status(400).send("Invalid date");
+    const file = fileFor(req.params.date);
+    if (!fs.existsSync(file)) return res.status(404).send("No entry for this date");
+    res.download(file, req.params.date + ".md");
+  });
+  app.get("/api/v2/export/:kind/:period", (req, res) => {
+    const kind = req.params.kind, period = req.params.period;
+    let entries, from, to;
+    if (kind === "month" && /^\d{4}-\d{2}$/.test(period)) {
+      from = period + "-01";
+      to = new Date(Date.UTC(Number(period.slice(0, 4)), Number(period.slice(5, 7)), 0)).toISOString().slice(0, 10);
+    } else if (kind === "year" && /^\d{4}$/.test(period)) {
+      from = period + "-01-01"; to = period + "-12-31";
+    } else if (kind === "week" && /^\d{4}-W\d{2}$/.test(period)) {
+      const parts = period.split("-W").map(Number), jan4 = new Date(Date.UTC(parts[0], 0, 4));
+      const weekday = jan4.getUTCDay() || 7, start = new Date(jan4);
+      start.setUTCDate(jan4.getUTCDate() - weekday + 1 + (parts[1] - 1) * 7);
+      const end = new Date(start); end.setUTCDate(start.getUTCDate() + 6);
+      from = start.toISOString().slice(0, 10); to = end.toISOString().slice(0, 10);
+    } else return res.status(400).send("Invalid report period");
+    entries = all().filter(entry => entry.date >= from && entry.date <= to);
+    const lines = ["# Wellbeing report — " + period, "", "Entries recorded: " + entries.length, "",
+      "## Recorded averages", "",
+      "- Mood: " + (avg(entries, "mood") ?? "—") + "/10",
+      "- Energy: " + (avg(entries, "energy") ?? "—") + "/10",
+      "- Sleep: " + (avg(entries, "sleep_quality") ?? "—") + "/10", "",
+      "## Daily records", ""];
+    for (const entry of entries) {
+      lines.push("### " + entry.date);
+      if (entry.morning?.intention) lines.push("- Intention: " + entry.morning.intention);
+      if (entry.evening?.went_well) lines.push("- Went well: " + entry.evening.went_well);
+      if (entry.evening?.difficult) lines.push("- Difficult: " + entry.evening.difficult);
+      if (entry.legacy?.reflection) lines.push("", entry.legacy.reflection);
+      if (entry.morning?.notes) lines.push("", entry.morning.notes);
+      if (entry.evening?.notes) lines.push("", entry.evening.notes);
+      lines.push("");
+    }
+    res.setHeader("Content-Type", "text/markdown; charset=utf-8");
+    res.setHeader("Content-Disposition", 'attachment; filename="' + period + '.md"');
+    res.send(lines.join("\n"));
+  });
   app.get("/api/v2/brain-map", (req, res) => {
     const entries = all(), visible = entries.slice(-400), nodes = visible.map(summary), edges = [];
     for (let i = 0; i < visible.length; i++) for (let j = i + 1; j < visible.length; j++) {
