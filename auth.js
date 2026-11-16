@@ -163,7 +163,7 @@ module.exports = function registerAuth(app, dataPath) {
   });
 
   app.use((req, res, next) => {
-    const publicPaths = new Set(["/login", "/login.html", "/login.js", "/setup", "/setup.html", "/manifest.webmanifest", "/sw.js", "/api/health", "/auth/status", "/auth/login", "/auth/setup"]);
+    const publicPaths = new Set(["/login", "/login.html", "/login.js", "/setup", "/setup.html", "/setup.js", "/auth.css", "/manifest.webmanifest", "/sw.js", "/api/health", "/auth/status", "/auth/login", "/auth/setup"]);
     if (publicPaths.has(req.path)) return next();
     const active = currentSession(req);
     if (!active) {
@@ -176,5 +176,4 @@ module.exports = function registerAuth(app, dataPath) {
 
   app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
   app.get("/setup", (req, res) => res.sendFile(path.join(__dirname, "public", "setup.html")));
-  app.post("/auth/logout", (req, res) => res.json({ ok: true }));
 };
