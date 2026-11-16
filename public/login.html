@@ -21,7 +21,7 @@ button{width:100%;border:0;border-radius:12px;padding:13px;margin-top:22px;backg
 <form id="login"><label for="username">Username</label><input id="username" name="username" autocomplete="username" required maxlength="32"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required><button id="submit" type="submit">Sign in</button><div class="message" id="message" role="status" aria-live="polite"></div></form>
 <div class="foot">Private by design · Your space, your pace</div></main>
 <script>
-if("serviceWorker" in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{});
 if(window.caches) caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 document.querySelector("#login").addEventListener("submit",async e=>{e.preventDefault();const button=document.querySelector("#submit"),message=document.querySelector("#message");button.disabled=true;message.textContent="Signing you in…";try{const response=await fetch("/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:document.querySelector("#username").value,password:document.querySelector("#password").value})});const data=await response.json();if(!response.ok)throw new Error(data.error||"Unable to sign in.");location.replace("/");}catch(error){message.textContent=error.message;button.disabled=false;}});
 </script></body></html>
