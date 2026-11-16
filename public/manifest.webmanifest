@@ -3,6 +3,6 @@
   "short_name": "Wellbeing",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f4fa",
-  "theme_color": "#f5f0fb"
+  "background_color": "#170f22",
+  "theme_color": "#21132f"
 }
