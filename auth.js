@@ -87,9 +87,12 @@ module.exports = function registerAuth(app, dataPath) {
     const origin = req.get("origin");
     if (!origin) return false;
     try {
-      const host = new URL(origin).host;
-      const expected = (req.get("x-forwarded-host") || req.get("host") || "").split(",")[0].trim();
-      return !!expected && host.toLowerCase() === expected.toLowerCase();
+      const host = new URL(origin).host.toLowerCase();
+      const expected = [req.get("host"), req.get("x-forwarded-host")]
+        .flatMap(value => String(value || "").split(","))
+        .map(value => value.trim().toLowerCase())
+        .filter(Boolean);
+      return expected.includes(host);
     } catch (_) { return false; }
   }
 
