@@ -101,6 +101,8 @@ module.exports = function registerAuth(app, dataPath) {
     res.setHeader("Referrer-Policy", "same-origin");
     res.setHeader("X-Frame-Options", "DENY");
     res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
+    res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
     if (req.path === "/sw.js") res.setHeader("Service-Worker-Allowed", "/");
     next();
   });
