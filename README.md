@@ -11,7 +11,7 @@ Open the app through your HTTPS Cloudflare hostname. On first startup, the serve
 
     docker compose logs wellbeing
 
-Find the line beginning [wellbeing-auth] One-time account setup key, then visit https://YOUR-HOSTNAME/setup. Create your username and a password of at least 12 characters. The setup key is invalidated after the first account is created. There is no public registration.
+Find the line beginning [wellbeing-auth] One-time account setup key, then visit https://YOUR-HOSTNAME/setup. If you miss the log line before creating the account, the same one-time key is stored in data/auth/setup.key on the host. Create your username and a password of at least 12 characters. The setup key is invalidated after the first account is created. There is no public registration.
 
 The first setup key is a temporary bootstrap secret. Do not share the logs or setup key. The permanent account and session store live in data/auth, separate from the Markdown wellbeing vault.
 
