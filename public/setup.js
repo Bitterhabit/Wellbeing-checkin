@@ -1,4 +1,4 @@
-if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistrations().then(registrations => registrations.forEach(registration => registration.unregister()));
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 if (window.caches) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
 document.querySelector("#setup").addEventListener("submit", async event => {
   event.preventDefault();
