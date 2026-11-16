@@ -51,6 +51,10 @@ test("single-owner authentication protects app APIs and supports setup, login an
   }
   assert.equal(ready, true, "server should start; output: " + output);
 
+  const initialPage = await fetch(origin + "/", { redirect: "manual" });
+  assert.equal(initialPage.status, 302);
+  assert.equal(initialPage.headers.get("location"), "/setup");
+
   const blocked = await fetch(origin + "/api/v2/entries");
   assert.equal(blocked.status, 401);
 
@@ -64,6 +68,10 @@ test("single-owner authentication protects app APIs and supports setup, login an
     })
   });
   assert.equal(setup.status, 200);
+
+  const protectedPage = await fetch(origin + "/", { redirect: "manual" });
+  assert.equal(protectedPage.status, 302);
+  assert.equal(protectedPage.headers.get("location"), "/login");
 
   const repeatSetup = await fetch(origin + "/auth/setup", {
     method: "POST",
