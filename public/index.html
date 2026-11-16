@@ -154,7 +154,7 @@ function setSlider(id, value) {
   const el = $(id); el.value = value != null && value !== "" ? value : 5;
   $(id + "-out").textContent = el.value + "/10";
 }
-["m-sleep","m-mood","m-energy","e-mood","e-energy"].forEach(id => $(id).addEventListener("input", () => setSlider(id)));
+["m-sleep","m-mood","m-energy","e-mood","e-energy"].forEach(id => $(id).addEventListener("input", () => setSlider(id, $(id).value)));
 function setStatus(id, message) { $(id).textContent = message; }
 async function api(url, options) {
   const response = await fetch(url, options);
