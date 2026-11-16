@@ -4,23 +4,44 @@ A private, self-hosted wellbeing journal. The 2.0 work keeps Markdown as the por
 
 ## Run with Docker
 
-```bash
-mkdir -p data/vault/Daily
-docker compose up -d --build
-```
+    mkdir -p data/vault/Daily data/auth
+    docker compose up -d --build
 
-Open `http://YOUR-SERVER-IP:3000`.
+Open the app through your HTTPS Cloudflare hostname. On first startup, the server creates a one-time setup key and prints it to the container log:
 
-The container serves the lowercase `public/` directory. The original upload used `Public/` (capital P); the 2.0 branch restores the lowercase directory expected by both Express and the Dockerfile.
+    docker compose logs wellbeing
+
+Find the line beginning [wellbeing-auth] One-time account setup key, then visit https://YOUR-HOSTNAME/setup. Create your username and a password of at least 12 characters. The setup key is invalidated after the first account is created. There is no public registration.
+
+The first setup key is a temporary bootstrap secret. Do not share the logs or setup key. The permanent account and session store live in data/auth, separate from the Markdown wellbeing vault.
+
+## Authentication and security
+
+- Single-owner account; no public registration or user enumeration.
+- Passwords are hashed with Node.js scrypt and a per-account random salt.
+- Server-side sessions use random tokens; only token hashes are stored on disk.
+- Session cookies are HttpOnly, SameSite=Strict and Secure by default, with a seven-day absolute expiry.
+- Login and setup attempts are rate-limited by client IP.
+- Mutating authentication requests require a same-origin request.
+- Every app page, static asset and API endpoint is protected; only login/setup assets and the minimal Docker health endpoint are public.
+- Auth data persists in ./data/auth across container rebuilds.
+- Private pages and assets are sent with no-store cache headers. The previous service-worker cache is removed and the worker unregisters itself.
+- Logout invalidates the server-side session.
+
+The app is designed to work independently of Cloudflare identity headers. Cloudflare Tunnel is currently the transport; a future VPN/reverse-proxy deployment can continue using the app's own login. Keep the tunnel hostname restricted while it is in use and use HTTPS.
+
+**Cookie setting:** SESSION_COOKIE_SECURE=true is the default and is appropriate when accessing through HTTPS (including the Cloudflare hostname). If you deliberately test over plain HTTP on a trusted LAN, set it to false temporarily in compose.yaml; restore true before using HTTPS or exposing the app again.
+
+To deliberately reset the single-owner account, stop the container, remove data/auth/account.json and data/auth/sessions.json, then start it again. A new one-time setup key will be generated. Do not delete data/auth casually: that removes your login account and sessions.
 
 ## Data and compatibility
 
-- The canonical vault is mounted at `./data/vault` on the host and `/app/data/vault` in the container.
+- The canonical wellbeing vault is mounted at ./data/vault on the host and /app/data/vault in the container.
 - Existing daily Markdown entries remain readable. The first edit through the new check-in API upgrades that day's file to schema version 2 while retaining its legacy values and reflection.
-- New records are Markdown files under `data/vault/Daily/YYYY-MM-DD.md`. Structured check-in data is stored in a clearly marked JSON metadata comment inside the Markdown file, with readable morning/evening sections below it.
-- No private vault data should be committed to Git.
+- New records are Markdown files under data/vault/Daily/YYYY-MM-DD.md. Structured check-in data is stored in a clearly marked JSON metadata comment inside the Markdown file, with readable morning/evening sections below it.
+- Do not commit data/ or secrets to Git.
 
-## 2.0 features in progress
+## 2.0 features
 
 - Independent morning and evening check-ins; either can be saved on its own.
 - Personal tags, archive search and date browsing.
@@ -32,34 +53,30 @@ The current brain map indexes the 400 most recent daily records. The visual list
 
 ## API
 
-The versioned endpoints are under `/api/v2`:
+The versioned endpoints are under /api/v2 and require an authenticated session:
 
-- `GET /api/v2/entry/:date`
-- `POST /api/v2/entry`
-- `GET /api/v2/entries`
-- `GET /api/v2/search?q=...`
-- `GET /api/v2/insights?period=week|month&date=YYYY-MM-DD`
-- `GET /api/v2/brain-map`
-- `GET /api/v2/export/day/:date`
-- `GET /api/v2/export/:kind/:period` (week, month or year)
+- GET /api/v2/entry/:date
+- POST /api/v2/entry
+- GET /api/v2/entries
+- GET /api/v2/search?q=...
+- GET /api/v2/insights?period=week|month&date=YYYY-MM-DD
+- GET /api/v2/brain-map
+- GET /api/v2/export/day/:date
+- GET /api/v2/export/:kind/:period (week, month or year)
 
-The original `/api/entry` and export endpoints remain for compatibility with the first version.
+The original /api/entry and export endpoints remain for compatibility with the first version and are also protected. /api/health is intentionally unauthenticated for the Docker health check and returns only a minimal healthy status.
 
 ## Tests
 
-```bash
-npm install
-npm test
-```
+    npm install
+    npm test
 
-The tests use Node's built-in test runner and a temporary vault.
+The check-in tests use a temporary vault. Authentication has a separate integration test for first-run setup, login, API protection and logout.
 
 ## Privacy and deployment
 
-This app currently has no built-in login. Keep it on a trusted LAN or behind an authenticated access layer and secure transport. Do not expose it directly to the public internet. Petrio and Alfie integration is not enabled; any future integration must be explicit, opt-in and scoped.
-
-The app is a personal reflection tool, not a medical device or diagnostic service.
+The app is a personal reflection tool, not a medical device or diagnostic service. Petrio and Alfie integration is not enabled yet. Any future connection must be explicit, opt-in and read-only initially, with narrowly scoped access to wellbeing records.
 
 ## Backups and restore
 
-Use **Download full vault backup (.zip)** in the app or back up `data/vault` through your normal homelab process. To restore, stop the container, restore the vault contents to the mounted host directory, then start the container again.
+Use Download full vault backup (.zip) in the app or back up data/vault through your normal homelab process. Authentication state is separate: include data/auth in a private server backup if you want to preserve the account and sessions. Protect that backup as a credential-bearing file. To restore, stop the container, restore both directories to their mounted host locations, then start the container again.
