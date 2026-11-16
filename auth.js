@@ -74,7 +74,7 @@ module.exports = function registerAuth(app, dataPath) {
   }
   function currentSession(req) {
     const token = tokenFrom(req);
-    if (!token || token.length > 200) return null;
+    if (!accountExists() || !token || token.length > 200) return null;
     const id = crypto.createHash("sha256").update(token).digest("hex");
     const session = sessions[id];
     if (!session || session.expiresAt <= Date.now()) {
@@ -175,5 +175,5 @@ module.exports = function registerAuth(app, dataPath) {
   });
 
   app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
-  app.get("/setup", (req, res) => res.sendFile(path.join(__dirname, "public", "setup.html")));
+  app.get("/setup", (req, res) => accountExists() ? res.redirect(302, "/login") : res.sendFile(path.join(__dirname, "public", "setup.html")));
 };
