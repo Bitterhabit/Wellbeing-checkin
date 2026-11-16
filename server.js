@@ -13,7 +13,7 @@ app.set("trust proxy", 1);
 fs.mkdirSync(DAILY, { recursive: true });
 const DATA = path.resolve(process.env.DATA_PATH || path.join(__dirname, "data"));
 require("./auth")(app, DATA);
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { setHeaders: res => res.setHeader("Cache-Control", "no-store, private") }));
 
 const safeDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s || "") && !Number.isNaN(Date.parse(s));
 const notePath = (date) => path.join(DAILY, `${date}.md`);
