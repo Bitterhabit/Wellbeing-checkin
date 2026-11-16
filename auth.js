@@ -139,7 +139,9 @@ module.exports = function registerAuth(app, dataPath) {
     const stored = account();
     const username = String(req.body?.username || "").trim().toLowerCase();
     const password = typeof req.body?.password === "string" ? req.body.password : "";
-    if (!stored || !safeEqual(username, stored.username)) return res.status(401).json({ error: "Incorrect username or password." });
+    if (!stored || !/^[a-z0-9._-]{3,32}$/.test(username) || password.length < 1 || password.length > 200 || !safeEqual(username, stored.username)) {
+      return res.status(401).json({ error: "Incorrect username or password." });
+    }
     const candidate = await hashPassword(password, stored.salt);
     if (!safeEqual(candidate, stored.passwordHash)) return res.status(401).json({ error: "Incorrect username or password." });
     clearLimit(req, "login");
