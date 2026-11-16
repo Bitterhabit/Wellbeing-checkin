@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f5f0fb">
+<meta name="theme-color" content="#21132f">
 <title>Wellbeing — a little space for you</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <style>
@@ -24,10 +24,36 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:5px 0 15px;margin-bottom:9px;sc
 .footer{color:#a098a9;text-align:center;font-size:11px;margin-top:25px}
 @media(max-width:760px){.shell{padding:17px 13px 42px}.grid{grid-template-columns:1fr}.intro h2{font-size:24px}.card{padding:16px}.metrics{grid-template-columns:1fr}.metric{display:grid;grid-template-columns:1fr 1.1fr;align-items:center}.metric input{margin:0}.insight-cards{grid-template-columns:repeat(3,1fr)}.brain-map{min-height:210px}}
 @media(max-width:420px){.date-pill{display:none}.insight-cards{grid-template-columns:1fr}.insight{display:flex;align-items:center;justify-content:space-between}.insight strong{margin:0}.brand h1{font-size:18px}}
+
+/* Petrio deep-purple visual foundation */
+:root{color-scheme:dark;--ink:#f2eafa;--muted:#b9a9c8;--purple:#a77bd0;--plum:#8c61b4;--lilac:#3a2949;--line:#4b385d;--card:#291d36;--peach:#6c493e;--mint:#294b42}
+body{background:radial-gradient(ellipse at 12% 0%,#49305f 0,transparent 38%),#170f22;color:var(--ink)}
+.brand .mark{background:#49305f;color:#ead8fa;box-shadow:inset 0 0 0 1px #765a91}
+.date-pill{border-color:var(--line);background:#2c2039;color:#d4c5e1}
+nav button{color:#c0b1cf}nav button.active{background:#49345e;color:#f0e5fb}
+.card{background:linear-gradient(155deg,#2c2039,#261a33);border-color:var(--line);box-shadow:0 8px 24px #09050e30}
+.intro p,.hint{color:var(--muted)}
+.field input[type=text],.field input[type=search],.field input[type=date],.field textarea,.field select,.toolbar input{background:#1c1327;border-color:#514064;color:var(--ink)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#b18bd5;box-shadow:0 0 0 3px #a48bc52b}
+.metric,.insight{background:#342541;border-color:#514064}
+.metric output,.insight strong{color:#d2b5ee}
+.primary{background:linear-gradient(100deg,#7950a1,#9b70c2);color:#fff}
+.soft{background:#49345e;color:#eadcf7}.ghost{background:#30223e;color:#d5c7e2;border-color:#514064}
+.status{color:#d1b4ee}.side-note,.legacy{background:#382747;color:#d0bfdc}
+.entry-row,.map-list button{background:#30223e;border-color:#514064;color:var(--ink)}
+.entry-row .arrow{color:#c4a4e4}
+.insight span,.entry-row small{color:var(--muted)}
+.sources button{background:#382747;border-color:#5b456d;color:#e0d0ef}
+.brain-map{background:radial-gradient(ellipse at center,#382747 0,#251a32 75%);border-color:#514064}
+.selected{background:#382747;border-color:#5b456d;color:#eee4f7}
+.empty{background:#30223e;color:var(--muted)}
+.footer{color:#8e7d9d}
+.header-actions{display:flex;align-items:center;gap:8px}.logout{border:1px solid #59436d;background:#30223e;color:#e4d6ef;border-radius:30px;padding:9px 12px;font-size:11px;font-weight:750}
+@media(max-width:420px){.header-actions{gap:5px}.logout{padding:8px 10px}}
 </style>
 </head>
 <body><main class="shell">
-<header><div class="brand"><div class="mark" aria-hidden="true">✿</div><div><h1>Wellbeing</h1><p>A little space for you</p></div></div><div class="date-pill" id="todayLabel">Today</div></header>
+<header><div class="brand"><div class="mark" aria-hidden="true">✿</div><div><h1>Wellbeing</h1><p>A little space for you</p></div></div><div class="header-actions"><div class="date-pill" id="todayLabel">Today</div><button class="logout" id="logout" type="button">Log out</button></div></header>
 <nav aria-label="Main navigation">
 <button class="active" data-view="today">Today</button><button data-view="insights">Insights</button><button data-view="brain">Brain map</button><button data-view="archive">Journal</button><button data-view="settings">About & privacy</button>
 </nav>
@@ -61,7 +87,7 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:5px 0 15px;margin-bottom:9px;sc
 </section>
 </div>
 <aside>
-<section class="card"><h3>Your day, your pace</h3><p class="hint">A check-in is an invitation, not an obligation. Skip a day, return later, or change an answer whenever you need.</p><div class="side-note">🌱 Your records stay as Markdown files in your own vault. No account or external service is needed for the standalone app.</div><div id="legacy-note"></div></section>
+<section class="card"><h3>Your day, your pace</h3><p class="hint">A check-in is an invitation, not an obligation. Skip a day, return later, or change an answer whenever you need.</p><div class="side-note">🌱 Your records stay as Markdown files in your own vault. Your account protects access to this private space.</div><div id="legacy-note"></div></section>
 <section class="card"><h3>Personal tags</h3><p class="hint">Add a few words to help you find this day later. Tags also create real connections in your brain map.</p><div class="field"><label for="tags">Tags, separated by commas</label><input class="tag-input" id="tags" type="text" placeholder="e.g. family, outdoors, work"></div><button class="btn soft" id="save-tags">Save tags</button><div class="status" id="tag-status" role="status"></div></section>
 </aside>
 </div>
@@ -97,7 +123,7 @@ nav{display:flex;gap:7px;overflow-x:auto;padding:5px 0 15px;margin-bottom:9px;sc
 <section class="view" id="view-settings">
 <div class="intro"><div class="eyebrow">The important bits</div><h2>About your space</h2><p>Designed to be useful on its own, with your data staying under your control.</p></div>
 <section class="card"><h3>Where your data lives</h3><p class="hint">Daily records are stored as Markdown in the server's vault folder. The app does not need a cloud account, analytics service or AI connection.</p><div class="side-note">The brain map and insights are generated from the records in that vault. They do not send your journal to an external service.</div></section>
-<section class="card"><h3>Privacy and deployment</h3><p class="hint">This version does not include built-in user authentication. Keep it on a trusted private network or behind an authenticated access layer. Do not expose it directly to the public internet.</p><p class="hint">Petrio and Alfie integration is not enabled. Any future connection will be opt-in and separately scoped.</p></section>
+<section class="card"><h3>Privacy and deployment</h3><p class="hint">This app uses a private, single-owner account. Keep the Cloudflare tunnel or future VPN access restricted to trusted devices and use HTTPS.</p><p class="hint">Petrio and Alfie integration is not enabled. Any future connection will be opt-in and separately scoped.</p></section>
 <section class="card"><h3>Looking after your archive</h3><p class="hint">Download a full vault backup regularly. Keep a second copy somewhere separate from the running container. Restoring means placing the backed-up vault in the configured data directory.</p><a class="btn soft" href="/api/backup" style="text-decoration:none;display:inline-flex">Download vault backup</a></section>
 </section>
 <div class="footer">A small space to check in with yourself · Your days do not need to be perfect.</div>
@@ -132,6 +158,7 @@ function setSlider(id, value) {
 function setStatus(id, message) { $(id).textContent = message; }
 async function api(url, options) {
   const response = await fetch(url, options);
+  if (response.status === 401) { location.replace("/login"); throw new Error("Your session has expired."); }
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Request failed");
   return data;
@@ -234,6 +261,8 @@ function selectMapNode(date) {
 }
 $("map-search").addEventListener("input",renderBrain);
 $("map-refresh").addEventListener("click",loadBrain);
+$("logout").addEventListener("click",async()=>{try{await fetch("/auth/logout",{method:"POST"});}finally{location.replace("/login");}});
+if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(registrations=>registrations.forEach(registration=>registration.unregister()));
+if(window.caches)caches.keys().then(keys=>keys.forEach(key=>caches.delete(key)));
 loadToday();
-if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});
 </script></body></html>
